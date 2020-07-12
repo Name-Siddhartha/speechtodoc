@@ -60,7 +60,11 @@ app.use("/public", express.static("public"));
  
 
     //   })
-
+    var room = io.sockets.adapter.rooms[socket.handshake.query.meeting_id];
+    console.log(room);
+ //    var x=[];
+ //    for(var i=0;i<room.length;++i){x.push(susers[room.sockets[i]])}       
+       io.to(socket.handshake.query.meeting_id).emit('someone_joined',{room_data:room,decode:susers});
       socket.on('disconnect', () => {    
            
         delete users[socket.handshake.query.loggeduser];
@@ -69,16 +73,15 @@ app.use("/public", express.static("public"));
         delete socket; 
         var room = io.sockets.adapter.rooms[socket.handshake.query.meeting_id];
         console.log(room);
-           io.to(socket.handshake.query.meeting_id).emit('someone_left',{room_data:room,decode:susers});  
-      
-        
- 
+           io.to(socket.handshake.query.meeting_id).emit('someone_left',{room_data:room,decode:susers}); 
        });
-       var room = io.sockets.adapter.rooms[socket.handshake.query.meeting_id];
-       console.log(room);
-    //    var x=[];
-    //    for(var i=0;i<room.length;++i){x.push(susers[room.sockets[i]])}       
-          io.to(socket.handshake.query.meeting_id).emit('someone_joined',{room_data:room,decode:susers});
+      
+    socket.on("speaking",function(data){
+        io.in(socket.handshake.query.meeting_id).emit('other_listen', {
+           msg:data.msg,
+           current_speaker:data.current_speaker
+        })
+    })
 
     
   
