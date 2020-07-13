@@ -13,7 +13,8 @@ var express                 = require("express"),
 var app = express();
 const server=http.createServer(app); 
 const io=socketio(server);
-mongoose.connect("mongodb://localhost/meet", {
+var port=process.env.PORT||3000;
+mongoose.connect(process.env.MONGODB_URI+"mongodb://localhost/meet", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
@@ -184,6 +185,6 @@ function isLoggedIn(req, res, next){
     res.redirect("/login");
 }
 
-server.listen(3000, function(){
+server.listen(port, function(){
     console.log("connect!");
 });
